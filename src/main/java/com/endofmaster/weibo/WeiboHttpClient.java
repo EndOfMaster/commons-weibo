@@ -21,6 +21,8 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.SSLContexts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.SSLContext;
 import java.io.IOException;
@@ -37,6 +39,8 @@ import static org.apache.http.entity.ContentType.MULTIPART_FORM_DATA;
  * @author ZM.Wang
  */
 public class WeiboHttpClient {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     static final ObjectMapper MAPPER = new ObjectMapper();
 
@@ -80,7 +84,6 @@ public class WeiboHttpClient {
             WeiboHttpResponse weiboHttpResponse = new WeiboHttpResponse(httpResponse.getStatusLine().getStatusCode());
             weiboHttpResponse.setReasonPhrase(httpResponse.getStatusLine().getReasonPhrase());
             weiboHttpResponse.setBody(httpResponse.getEntity().getContent());
-            weiboHttpResponse.setContentType(httpResponse.getEntity().getContentType().getValue());
             return weiboHttpResponse;
         } catch (IOException e) {
             throw new WeiboException(e);
@@ -91,13 +94,13 @@ public class WeiboHttpClient {
         RequestBuilder requestBuilder = RequestBuilder.create(weiboHttpRequest.getMethod())
                 .setUri(weiboHttpRequest.getUrl());
 
-        for (String headerKey : weiboHttpRequest.getHeaders().keySet()) {
+        for (String headerKey: weiboHttpRequest.getHeaders().keySet()) {
             requestBuilder.addHeader(headerKey, weiboHttpRequest.getHeaders().get(headerKey));
         }
 
         if ("POST".equalsIgnoreCase(weiboHttpRequest.getMethod()) || "PUT".equalsIgnoreCase(weiboHttpRequest.getMethod())) {
             Map<String, Object> map = new HashMap<>();
-            for (WeiboHttpRequest.Arg arg : weiboHttpRequest.getArgs()) {
+            for (WeiboHttpRequest.Arg arg: weiboHttpRequest.getArgs()) {
                 map.put(arg.key, arg.value);
             }
             if ("json".equalsIgnoreCase(weiboHttpRequest.getDataType())) {
@@ -112,7 +115,7 @@ public class WeiboHttpClient {
                 //目前其他模式只有form
                 try {
                     MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-                    for (String key : map.keySet()) {
+                    for (String key: map.keySet()) {
                         Object value = map.get(key);
                         if (value instanceof String) {
                             builder.addTextBody(key, value.toString());
@@ -128,7 +131,7 @@ public class WeiboHttpClient {
                 }
             }
         } else {
-            for (WeiboHttpRequest.Arg arg : weiboHttpRequest.getArgs()) {
+            for (WeiboHttpRequest.Arg arg: weiboHttpRequest.getArgs()) {
                 requestBuilder.addParameter(arg.key, arg.value.toString());
             }
         }

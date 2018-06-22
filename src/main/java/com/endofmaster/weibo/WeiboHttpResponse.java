@@ -23,7 +23,6 @@ public class WeiboHttpResponse {
 
     private int statusCode;
     private String reasonPhrase;
-    private String contentType;
     private InputStream body;
 
     public WeiboHttpResponse(int statusCode) {
@@ -33,27 +32,23 @@ public class WeiboHttpResponse {
     @SuppressWarnings("unchecked")
     public <T extends WeiboResponse> T parse(Class<T> tClass) throws WeiboException {
         try {
-            if (statusCode >= 200 && statusCode < 300) {
-                String paramsStr = StreamUtils.copyToString(body, Charset.forName("UTF-8"));
-                logger.debug("微博请求返回paramsStr：" + paramsStr);
-                String json = paramsStr;
-                if (!JsonUtils.isJson(paramsStr)) {
-                    if (paramsStr.contains("=") && paramsStr.contains("&")) {
-                        Map<String, String> params = ParamUtils.parseKvString(paramsStr);
-                        json = MAPPER.writeValueAsString(params);
-                    } else {
-                        json = getJson(paramsStr);
-                    }
+            String paramsStr = StreamUtils.copyToString(body, Charset.forName("UTF-8"));
+            logger.debug("微博请求返回paramsStr：" + paramsStr);
+            String json = paramsStr;
+            if (!JsonUtils.isJson(paramsStr)) {
+                if (paramsStr.contains("=") && paramsStr.contains("&")) {
+                    Map<String, String> params = ParamUtils.parseKvString(paramsStr);
+                    json = MAPPER.writeValueAsString(params);
+                } else {
+                    json = getJson(paramsStr);
                 }
-                T result = MAPPER.readValue(json, tClass);
-                if (!result.successful()) {
-                    logger.error("微博错误码：" + result.getCode() + ",错误内容：" + result.getMsg());
-                    throw new WeiboServerException(result.getMsg());
-                }
-                return result;
-            } else {
-                throw new WeiboServerException("Failed to parse body, invalid status code");
             }
+            T result = MAPPER.readValue(json, tClass);
+            if (!result.successful()) {
+                logger.error("微博错误码：" + result.getCode() + ",错误内容：" + result.getMsg());
+                throw new WeiboServerException(result.getMsg());
+            }
+            return result;
         } catch (IOException e) {
             throw new WeiboServerException(e);
         }
@@ -75,14 +70,6 @@ public class WeiboHttpResponse {
 
     public void setReasonPhrase(String reasonPhrase) {
         this.reasonPhrase = reasonPhrase;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
     }
 
     public InputStream getBody() {

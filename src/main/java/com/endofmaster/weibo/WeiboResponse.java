@@ -1,17 +1,20 @@
 package com.endofmaster.weibo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * @author YQ.Huang
  * @update ZM.Wang
  */
 public class WeiboResponse {
 
+    @JsonProperty("error_code")
     private int code;
-    private int ret;
+    @JsonProperty("error")
     private String msg;
 
     public boolean successful() {
-        return code == 0 || ret >= 0;
+        return code == 0;
     }
 
     public int getCode() {
@@ -32,20 +35,11 @@ public class WeiboResponse {
         return this;
     }
 
-    public int getRet() {
-        return ret;
-    }
-
-    public WeiboResponse setRet(int ret) {
-        this.ret = ret;
-        return this;
-    }
 
     @Override
     public String toString() {
         return "WeiboResponse{" +
                 "code=" + code +
-                ", ret=" + ret +
                 ", msg='" + msg + '\'' +
                 '}';
     }
