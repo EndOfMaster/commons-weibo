@@ -5,6 +5,8 @@ import com.endofmaster.weibo.*;
 
 import java.io.UnsupportedEncodingException;
 
+import static com.endofmaster.weibo.ReqDataType.FORM;
+
 /**
  * @author ZM.Wang
  */
@@ -30,7 +32,7 @@ public class WeiboBasicApi {
     }
 
     public WeiboOauth2AccessToken getOauth2AccessToken(String code) throws WeiboException {
-        WeiboHttpRequest request = new WeiboHttpRequest("https://api.weibo.com/oauth2/access_token").withMethod("post").withDataType("form")
+        WeiboHttpRequest request = new WeiboHttpRequest("https://api.weibo.com/oauth2/access_token").withMethod("post").withDataType(FORM)
                 .setArg("client_id", appId)
                 .setArg("client_secret", appKey)
                 .setArg("code", code)
@@ -41,7 +43,7 @@ public class WeiboBasicApi {
     }
 
     public WeiboAuthUserInfo getOauth2UserInfo(String uid, String oauth2AccessToken) throws WeiboException {
-        WeiboHttpRequest request = new WeiboHttpRequest("https://api.weibo.com/2/users/show.json").withMethod("post").withDataType("form")
+        WeiboHttpRequest request = new WeiboHttpRequest("https://api.weibo.com/2/users/show.json")
                 .setArg("access_token", oauth2AccessToken)
                 .setArg("uid", uid);
         WeiboHttpResponse response = client.execute(request);

@@ -2,6 +2,8 @@ package com.endofmaster.weibo;
 
 import java.util.*;
 
+import static com.endofmaster.weibo.ReqDataType.JSON;
+
 /**
  * @author YQ.Huang
  */
@@ -11,7 +13,7 @@ public class WeiboHttpRequest {
     private final Map<String, String> headers = new LinkedHashMap<>();
 
     private String method = "GET";
-    private String dataType = "json";
+    private String dataType = JSON;
     private String url;
 
     public WeiboHttpRequest(String url) {

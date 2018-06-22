@@ -15,11 +15,21 @@ public class WeiboAuthUserInfo extends WeiboResponse {
     @JsonProperty("screen_name")
     private String nickName;
 
-    @JsonProperty("gender")
-    private String sex;
+    private String gender;
 
     @JsonProperty("avatar_large")
     private String headImgUrl;
+
+    public String getSex() {
+        if (StringUtils.equals(gender, "m")) {
+            return "男";
+        } else if (StringUtils.equals(gender, "f")) {
+            return "女";
+        } else {
+            return "未知";
+        }
+    }
+
 
     public String getNickName() {
         return nickName;
@@ -30,13 +40,12 @@ public class WeiboAuthUserInfo extends WeiboResponse {
         return this;
     }
 
-    public String getSex() {
-        return sex;
+    public String getGender() {
+        return gender;
     }
 
-    public WeiboAuthUserInfo setSex(String sex) {
-        this.sex = sex;
-        return this;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
     public String getHeadImgUrl() {
